@@ -26,10 +26,22 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const menuCollection = client.db("restaurantDB").collection("menu");
-    
+    const reviewsCollection = client.db("restaurantDB").collection("reviews");
     
     app.get('/menu', async(req, res)=>{
         const result = await menuCollection.find().toArray();
+        res.send(result);
+    })
+    
+    
+    app.get('/reviews', async(req, res)=>{
+        const result = await reviewsCollection.find().toArray();
+        res.send(result);
+    })
+    
+    app.post('/carts', async(req, res)=>{
+      const cartItem = req.body;
+        const result = await reviewsCollection.insertOne(cartItem);
         res.send(result);
     })
 
