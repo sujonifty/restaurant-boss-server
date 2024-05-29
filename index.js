@@ -26,9 +26,25 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const menuCollection = client.db("restaurantDB").collection("menu");
+    const usersCollection = client.db("restaurantDB").collection("users");
     const reviewsCollection = client.db("restaurantDB").collection("reviews");
     const cartsCollection = client.db("restaurantDB").collection("carts");
     
+    //users related api
+    app.post('/users', async(req, res)=>{
+      const user = req.body;
+      //insert email if user doesn't exist
+      // we can do it many ways(1.email unique, 2. upsert, 3. simple checking)
+      const query= {email: user.email};
+      const existedUser= await usersCollection.findOne(query);
+      if(existedUser){
+        return res.send({message:'user already existed', insertedId: null});
+      }
+        const result = await usersCollection.insertOne(user);
+        res.send(result);
+    })
+
+    // menu related api
     app.get('/menu', async(req, res)=>{
         const result = await menuCollection.find().toArray();
         res.send(result);
